@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Generate creative text using GPT-2, an AI language model by OpenAI — powered by Hugging Face Transformers." />
+  <title>GPT-2 Text Generator</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- ── Animated Background ──────────────────────────────────────────────── -->
+  <div class="bg-orbs" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+  </div>
+
+  <!-- ── Top Navigation Bar ───────────────────────────────────────────────── -->
+  <header class="navbar" role="banner">
+    <div class="navbar-inner">
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">⚡</span>
+        <span class="brand-name">GPT-2 Studio</span>
+      </div>
+
+      <nav class="nav-right" aria-label="Header actions">
+        <!-- Dark / Light toggle -->
+        <button id="themeToggle" class="icon-btn" aria-label="Toggle dark mode" title="Toggle dark / light mode">
+          <span class="theme-icon" aria-hidden="true">☀️</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── Main Content ──────────────────────────────────────────────────────── -->
+  <main id="main" class="container">
+
+    <!-- Hero heading -->
+    <section class="hero" aria-labelledby="hero-title">
+      <h1 id="hero-title" class="hero-title">
+        <span class="gradient-text">GPT-2 Text Generator</span>
+      </h1>
+      <p class="hero-sub">
+        Powered by OpenAI's GPT-2 &amp; Hugging Face Transformers.<br />
+        Enter a prompt and watch the AI continue your story.
+      </p>
+    </section>
+
+    <!-- ── Generator Card ──────────────────────────────────────────────────── -->
+    <div class="card generator-card">
+
+      <!-- ── Prompt section ─────────────────────────────────────────────── -->
+      <section class="section" aria-labelledby="prompt-label">
+        <label id="prompt-label" class="field-label" for="promptInput">
+          Your Prompt
+          <span class="badge">Required</span>
+        </label>
+
+        <div class="textarea-wrapper">
+          <textarea
+            id="promptInput"
+            name="prompt"
+            class="textarea"
+            placeholder="Once upon a time, in a land far away…"
+            rows="5"
+            maxlength="500"
+            aria-required="true"
+            aria-describedby="charCounter"
+            spellcheck="true"
+          ></textarea>
+
+          <!-- Character counter -->
+          <div id="charCounter" class="char-counter" aria-live="polite">
+            <span id="charCount">0</span> / 500
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Advanced options (collapsible) ─────────────────────────────── -->
+      <details class="advanced-options" id="advancedOptions">
+        <summary class="advanced-toggle" aria-expanded="false">
+          <span>Advanced Settings</span>
+          <span class="toggle-arrow" aria-hidden="true">▾</span>
+        </summary>
+
+        <div class="options-grid">
+          <!-- Max new tokens -->
+          <div class="option-group">
+            <label class="option-label" for="maxLength">Max New Tokens</label>
+            <div class="slider-row">
+              <input type="range" id="maxLength" name="max_length" class="slider"
+                     min="20" max="300" step="10" value="100"
+                     aria-valuemin="20" aria-valuemax="300" aria-valuenow="100" />
+              <output class="slider-output" id="maxLengthOutput" for="maxLength">100</output>
+            </div>
+          </div>
+
+          <!-- Temperature -->
+          <div class="option-group">
+            <label class="option-label" for="temperature">
+              Temperature
+              <span class="hint" title="Higher = more creative; lower = more predictable">ℹ️</span>
+            </label>
+            <div class="slider-row">
+              <input type="range" id="temperature" name="temperature" class="slider"
+                     min="0.1" max="2.0" step="0.1" value="1.0"
+                     aria-valuemin="0.1" aria-valuemax="2.0" aria-valuenow="1.0" />
+              <output class="slider-output" id="temperatureOutput" for="temperature">1.0</output>
+            </div>
+          </div>
+
+          <!-- Top-K -->
+          <div class="option-group">
+            <label class="option-label" for="topK">Top-K</label>
+            <div class="slider-row">
+              <input type="range" id="topK" name="top_k" class="slider"
+                     min="1" max="100" step="1" value="50"
+                     aria-valuemin="1" aria-valuemax="100" aria-valuenow="50" />
+              <output class="slider-output" id="topKOutput" for="topK">50</output>
+            </div>
+          </div>
+
+          <!-- Top-P -->
+          <div class="option-group">
+            <label class="option-label" for="topP">Top-P (Nucleus)</label>
+            <div class="slider-row">
+              <input type="range" id="topP" name="top_p" class="slider"
+                     min="0.1" max="1.0" step="0.05" value="0.95"
+                     aria-valuemin="0.1" aria-valuemax="1.0" aria-valuenow="0.95" />
+              <output class="slider-output" id="topPOutput" for="topP">0.95</output>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- ── Action row ──────────────────────────────────────────────────── -->
+      <div class="action-row">
+        <button id="clearBtn" class="btn btn-ghost" type="button" aria-label="Clear prompt">
+          Clear
+        </button>
+        <button id="generateBtn" class="btn btn-primary" type="button" aria-label="Generate text">
+          <span class="btn-icon" aria-hidden="true">✨</span>
+          Generate
+        </button>
+      </div>
+
+      <!-- ── Error banner ────────────────────────────────────────────────── -->
+      <div id="errorBanner" class="error-banner hidden" role="alert" aria-live="assertive">
+        <span class="error-icon" aria-hidden="true">⚠️</span>
+        <span id="errorMessage">Something went wrong.</span>
+        <button id="dismissError" class="dismiss-btn" aria-label="Dismiss error">✕</button>
+      </div>
+    </div>
+
+    <!-- ── Output Card ──────────────────────────────────────────────────────── -->
+    <div id="outputCard" class="card output-card hidden" aria-live="polite">
+
+      <!-- Loading state -->
+      <div id="loadingState" class="loading-state hidden" role="status" aria-label="Generating text">
+        <div class="spinner" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <p class="loading-text">Generating your text<span class="dots">...</span></p>
+      </div>
+
+      <!-- Result state -->
+      <div id="resultState" class="result-state hidden">
+        <div class="result-header">
+          <h2 class="result-title">Generated Output</h2>
+          <div class="result-meta">
+            <span id="tokensBadge" class="tokens-badge" aria-live="polite"></span>
+            <button id="copyBtn" class="btn btn-outline" type="button" aria-label="Copy generated text to clipboard">
+              <span class="copy-icon" aria-hidden="true">📋</span>
+              Copy
+            </button>
+          </div>
+        </div>
+
+        <div id="outputText" class="output-text" role="region" aria-label="Generated text output"></div>
+
+        <div class="result-footer">
+          <button id="regenerateBtn" class="btn btn-ghost" type="button" aria-label="Regenerate with same prompt">
+            🔄 Regenerate
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Info strip ───────────────────────────────────────────────────────── -->
+    <aside class="info-strip" aria-label="Model information">
+      <div class="info-item">
+        <span class="info-icon">🤖</span>
+        <span>Model: <strong>GPT-2</strong></span>
+      </div>
+      <div class="info-item">
+        <span class="info-icon">📊</span>
+        <span>Parameters: <strong>124 M</strong></span>
+      </div>
+      <div class="info-item">
+        <span class="info-icon">🏷️</span>
+        <span>By: <strong>OpenAI</strong></span>
+      </div>
+      <div class="info-item">
+        <span class="info-icon">🔗</span>
+        <span>Via: <strong>Hugging Face</strong></span>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- ── Copy toast ────────────────────────────────────────────────────────── -->
+  <div id="copyToast" class="toast hidden" role="status" aria-live="polite">
+    ✅ Copied to clipboard!
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
